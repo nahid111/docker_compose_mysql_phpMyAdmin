@@ -1,11 +1,12 @@
 version: '2'
 
+# Services
 services:
 
   # MySql
   mysqlDB:
     image: "mysql:5.7"
-    container_name: container_mysql
+    container_name: mysql_container
     command: --default-authentication-plugin=mysql_native_password
     environment:
       - MYSQL_DATABASE=db_test
@@ -15,17 +16,18 @@ services:
       - ./datadir/:/var/lib/mysql
     ports:
       - "3306:3306"
+    restart: unless-stopped
   
   # phpMyAdmin
   phpmyadmin:
     depends_on:
       - mysqlDB
     image: phpmyadmin/phpmyadmin
-    container_name: container_phpMyAdmin
-    restart: always
-    ports:
-      - 8090:80
+    container_name: phpMyAdmin_container
     environment:
       PMA_HOST: mysqlDB
       MYSQL_ROOT_PASSWORD: secretPassword
+    ports:
+      - 8090:80
+    restart: unless-stopped
 
