@@ -1,33 +1,41 @@
-version: '2'
+version: '3.8'
 
-# Services
 services:
 
   # MySql
-  mysqlDB:
-    image: "mysql:5.7"
-    container_name: mysql_container
-    command: --default-authentication-plugin=mysql_native_password
+  dbLocal:
+    image: mysql:8.0
+    container_name: dbMySQL
+    cap_add:
+      - SYS_NICE
+    restart: always
     environment:
-      - MYSQL_DATABASE=db_test
-      - MYSQL_USER=root
+      - MYSQL_DATABASE=db_local
       - MYSQL_ROOT_PASSWORD=secretPassword
-    volumes:
-      - ./datadir/:/var/lib/mysql
     ports:
-      - "3306:3306"
-    restart: unless-stopped
+      - '3306:3306'
+    volumes:
+      - dbVol:/var/lib/mysql
+      - ./dbVol/init.sql:/docker-entrypoint-initdb.d/init.sql
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: 500M
   
   # phpMyAdmin
   phpmyadmin:
     depends_on:
-      - mysqlDB
+      - dbLocal
     image: phpmyadmin/phpmyadmin
-    container_name: phpMyAdmin_container
+    container_name: phpMyAdmin
     environment:
-      PMA_HOST: mysqlDB
+      PMA_HOST: dbLocal
       MYSQL_ROOT_PASSWORD: secretPassword
     ports:
       - 8090:80
     restart: unless-stopped
+
+volumes:
+  dbVol:
+    driver: local
 
