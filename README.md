@@ -9,7 +9,7 @@ $ docker-compose up -d
 - Use the following configurations for DB connection
 ```python
 DB_HOST = 'localhost:3306'
-DB_NAME = 'db_test'
+DB_NAME = 'db_local'
 DB_USERNAME = 'root'
 DB_PASSWORD = 'secretPassword'
 ```
